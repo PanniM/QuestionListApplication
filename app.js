@@ -3,19 +3,23 @@
 //TODO every element should be checked parent level
 //TODO local browser storage
 
-let questions = [{
+let questions;
+
+let zeroQuestionList = [{
     id: 1,
-    text: "Can you answer these questions?",
+    questionText: "Can you answer these questions?",
     answer: "Im sure you can! Good luck",
     creationDate: 1541944069,
     rating: 0,
 }, {
     id: 2,
-    text: "In CSS what is the difference between margin and padding",
+    questionText: "In CSS what is the difference between margin and padding",
     answer: "The zebra is a great Animal",
     creationDate: 1541944069,
     rating: 0,
 }];
+
+
 
 const cardContainerNode = document.getElementById("card-container");
 let navContainerNode = document.getElementById("nav-container");
@@ -28,30 +32,49 @@ document.addEventListener('keydown', function (event) {
 
 
 
-init(questions);
+init();
+
 function init() {
+    if(window.localStorage.getItem("storedQuestionList")!==null && window.localStorage.getItem("storedQuestionList")!== undefined && window.localStorage.getItem("storedQuestionList")!== "undefined"){
+
+        try {
+            questions = JSON.parse(window.localStorage.getItem("storedQuestionList"));
+        }
+        catch(err) {
+            questions = zeroQuestionList;
+        }
+    }else{
+        questions = zeroQuestionList;
+
+    }
+    storeQuestionListInWindowLocalStorage();
     renderQuestions();
     renderNav();
 }
+
+function storeQuestionListInWindowLocalStorage(){
+    window.localStorage.setItem("storedQuestionList", JSON.stringify(questions));
+};
 
 function generateId() {
     return Math.round(Math.random() * 100000);
 }
 
 function addNewQuestion() {
-    let question = document.getElementById('newQuestion').value;
+    let questionText = document.getElementById('newQuestion').value;
     let answer = document.getElementById('newAnwser').value;
-    if (question.length > 0) {
+    if (questionText.length > 0) {
         let created = Date.now();
         let id = generateId();
 
-        storeNewQuestionInQuestionList(id, question, answer, created, 0);
+        storeNewQuestionInQuestionList(id, questionText, answer, created, 0);
         document.getElementById('newQuestion').value = "";
         document.getElementById('newAnwser').value = "";
 
-        addNodeElementToQuestions(id, question, answer, created);
-        addNodeElementToNav(id, question);
+        addNodeElementToQuestions(id, questionText, answer, created);
+        addNodeElementToNav(id, questionText);
         showNotificationBar("Sucessfully added new question");
+        storeQuestionListInWindowLocalStorage();
 
     }//todo hint if user try to save empty question
 }
@@ -67,7 +90,7 @@ function addNodeElementToNav(id, text){
 function renderNav() {
     navContainerNode.innerHTML = "";
     questions.forEach(function (question) {
-        navContainerNode.appendChild(renderNavLink(question.id, question.text));
+        navContainerNode.appendChild(renderNavLink(question.id, question.questionText));
     })
 }
 
@@ -81,14 +104,17 @@ function renderNavLink(id, text){
 
 
 function renderQuestions() {
+
     cardContainerNode.innerHTML = "";
     questions.forEach(function (question) {
-        cardContainerNode.appendChild(renderCard(question.id, question.text, question.answer, question.creationDate));
+        cardContainerNode.appendChild(renderCard(question.id, question.questionText, question.answer, question.creationDate));
     })
+
+    console.log( window.localStorage.getItem("storedQuestionList"));
 }
 
 function storeNewQuestionInQuestionList(_id, _question, _answer, _created, _rate) {
-    questions[questions.length] = {id: _id, question: _question, answer: _answer, creationDate: _created, rating: _rate};
+    questions[questions.length] = {id: _id, questionText: _question, answer: _answer, creationDate: _created, rating: _rate};
 }
 
 function removeElementFromQuestionList(_id) {
@@ -130,8 +156,9 @@ function saveAnswer(id) {
     console.log(document.getElementById(id).getElementsByClassName("answer")[0].innerText);
     original.answer = document.getElementById(id).getElementsByClassName("answer")[0].innerText;
     questions[indexOfOriginal] = original;
-
     renderQuestions();
+    storeQuestionListInWindowLocalStorage();
+
 }
 
 function saveQuestion(id) {
@@ -145,17 +172,17 @@ function saveQuestion(id) {
 
     let text = document.getElementById(id).getElementsByClassName("question-text")[0].innerText;
     if (text.length > 0) {
-        original.text = text;
+        original.questionText = text;
         questions[indexOfOriginal] = original;
-        //TODO update not render all..!
         renderQuestions();
         renderNav();
+        storeQuestionListInWindowLocalStorage();
     }
 
 }
 
 function renderCard(_id, _question, _answer, _created) {
-    let defaultValue = {question : _question, answer: _answer};
+    let defaultValue = {text : _question, answer: _answer};
 
     let questionText = getQuestionNodeElement(_question);
     let createdText = getCreatedNodeElement(new Date(_created).toDateString());
@@ -198,7 +225,7 @@ function renderCard(_id, _question, _answer, _created) {
     onFocusOut = (e) => {
 
         answer.innerText = defaultValue.answer;
-        questionText.innerText = defaultValue.question;
+        questionText.innerText = defaultValue.questionText;
     };
 
 
@@ -213,6 +240,7 @@ function renderCard(_id, _question, _answer, _created) {
             if (confirm("Are you sure you van to delete it?")) {
                 removeElementFromHTMLQuestionList(_id);
                 showNotificationBar("Question deletion was successful");
+                storeQuestionListInWindowLocalStorage();
 
             }
         }
