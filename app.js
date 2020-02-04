@@ -195,6 +195,7 @@ function renderCard(id, question, answer, created) {
     };
 
     return parent;
+    //TODO on mobile there is no enter -> add save button
 }
 
 function renderAddButton() {
