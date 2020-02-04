@@ -189,7 +189,7 @@ function renderCard(id, question, answer, created) {
         function onDelete() {
             if (confirm("Are you sure you van to delete it?")) {
                 removeElementFromHTMLQuestionList(id);
-                showNotificationBar("Question deletion was successful");
+                showNotificationBar("Question deleted");
                 storeQuestionListInWindowLocalStorage();
             }
         }
