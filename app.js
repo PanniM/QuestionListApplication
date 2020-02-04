@@ -210,10 +210,10 @@ function renderAddButton() {
 
 
 function renderQuestionContainer(questionText, createdText, deleteButton) {
-    let questionContainer = document.createElement("DIV");
-    let left = document.createElement("DIV");
+    let questionContainer = document.createElement("div");
+    let left = document.createElement("div");
     left.className = "left";
-    let right = document.createElement("DIV");
+    let right = document.createElement("div");
     right.className = "right";
 
     left.appendChild(questionText);
