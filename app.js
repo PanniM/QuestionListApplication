@@ -108,13 +108,12 @@ function renderQuestions() {
     cardContainerNode.innerHTML = "";
     questions.forEach(function (question) {
         cardContainerNode.appendChild(renderCard(question.id, question.questionText, question.answer, question.creationDate));
-    })
-
-    console.log( window.localStorage.getItem("storedQuestionList"));
+    });
 }
 
 function storeNewQuestionInQuestionList(_id, _question, _answer, _created, _rate) {
     questions[questions.length] = {id: _id, questionText: _question, answer: _answer, creationDate: _created, rating: _rate};
+    storeQuestionListInWindowLocalStorage();
 }
 
 function removeElementFromQuestionList(_id) {
@@ -134,13 +133,14 @@ function removeElementFromNav(id){
 
 function removeElementFromCardContainerNode(id){
     cardContainerNode.removeChild(document.getElementById(id));
-};
+}
 
 function removeElementFromHTMLQuestionList(id) {
     console.log(document.getElementById(id));
     removeElementFromNav(id);
     removeElementFromCardContainerNode(id);
     removeElementFromQuestionList(id);
+    storeQuestionListInWindowLocalStorage();
 }
 
 
@@ -153,11 +153,11 @@ function saveAnswer(id) {
         return el.id === id;
     })[0];
 
-    console.log(document.getElementById(id).getElementsByClassName("answer")[0].innerText);
-    original.answer = document.getElementById(id).getElementsByClassName("answer")[0].innerText;
+    console.log(document.getElementById(id).getElementsByClassName("answer-text")[0].innerText);
+    original.answer = document.getElementById(id).getElementsByClassName("answer-text")[0].innerText;
     questions[indexOfOriginal] = original;
     renderQuestions();
-    storeQuestionListInWindowLocalStorage();
+
 
 }
 
@@ -181,34 +181,34 @@ function saveQuestion(id) {
 
 }
 
-function renderCard(_id, _question, _answer, _created) {
-    let defaultValue = {text : _question, answer: _answer};
+function renderCard(id, question, answer, created) {
+    let defaultValue = {question : question, answer: answer};
 
-    let questionText = getQuestionNodeElement(_question);
-    let createdText = getCreatedNodeElement(new Date(_created).toDateString());
-    let deleteButton = getDeleteButtonNodeElement(_id);
+    let questionText = getQuestionNodeElement(question);
+    let createdText = getCreatedNodeElement(new Date(created).toDateString());
+    let deleteButton = getDeleteButtonNodeElement(id);
 
     let questionContainer = getQuestionContainer(questionText, createdText, deleteButton);
 
-    let answer = getAnwserNodeElement(_answer);
+    let answerText = getAnwserNodeElement(answer);
 
     let answerContainer = document.createElement("DIV");
-    answerContainer.appendChild(answer);
-    answerContainer.className = "answerContainer";
+    answerContainer.appendChild(answerText);
+    answerContainer.className = "answer-container";
 
     let parent = document.createElement("DIV");
     parent.appendChild(questionContainer);
     parent.appendChild(answerContainer);
-    parent.setAttribute("id", _id);
+    parent.setAttribute("id", id);
     parent.className = "question-card";
 
     onSave = (e) => {
         if (event.keyCode === 13) {
             if (e.target === questionText) {
-                saveQuestion(_id);
+                saveQuestion(id);
             }
             if (e.target === answer) {
-                saveAnswer(_id);
+                saveAnswer(id);
             }
         }
     };
@@ -223,9 +223,8 @@ function renderCard(_id, _question, _answer, _created) {
     };
 
     onFocusOut = (e) => {
-
         answer.innerText = defaultValue.answer;
-        questionText.innerText = defaultValue.questionText;
+        questionText.innerText = defaultValue.question;
     };
 
 
@@ -238,7 +237,7 @@ function renderCard(_id, _question, _answer, _created) {
     deleteButton.onclick = function () {
         function onDelete() {
             if (confirm("Are you sure you van to delete it?")) {
-                removeElementFromHTMLQuestionList(_id);
+                removeElementFromHTMLQuestionList(id);
                 showNotificationBar("Question deletion was successful");
                 storeQuestionListInWindowLocalStorage();
 
@@ -263,7 +262,7 @@ function getQuestionContainer(questionText, createdText, deleteButton) {
     right.appendChild(deleteButton);
     questionContainer.appendChild(left);
     questionContainer.appendChild(right);
-    questionContainer.className = "questionContainer";
+    questionContainer.className = "question-container";
     return questionContainer;
 }
 
@@ -280,7 +279,7 @@ function getAnwserNodeElement(answer) {
 
     let answerNodeElement = document.createElement("p");
     answerNodeElement.innerText = answer;
-    answerNodeElement.className = "answer";
+    answerNodeElement.className = "answer-text";
     answerNodeElement.setAttribute("contenteditable", "true");
     return answerNodeElement;
 }
