@@ -1,5 +1,3 @@
-
-
 document.addEventListener('keydown', function (event) {
     if (event.keyCode === 13) {
         event.preventDefault();
@@ -86,8 +84,8 @@ function storeQuestionListInWindowLocalStorage() {
 
 
 function init() {
-    if (window.localStorage.getItem("storedQuestionList") !== null && window.localStorage.getItem("storedQuestionList") !== undefined && window.localStorage.getItem("storedQuestionList") !== "undefined") {
-
+    let storedList = window.localStorage.getItem("storedQuestionList");
+    if (storedList !== "null" && storedList !== "undefined" && storedList!=="[]") {
         try {
             questions = JSON.parse(window.localStorage.getItem("storedQuestionList"));
         }
@@ -131,8 +129,6 @@ function renderQuestions() {
     questions.forEach(function (question) {
         cardContainerNode.appendChild(renderCard(question.id, question.questionText, question.answer, question.creationDate));
     });
-
-    console.log("rendering")
 }
 
 function renderCard(id, question, answer, created) {
@@ -162,23 +158,23 @@ function renderCard(id, question, answer, created) {
                 saveQuestion(id);
                 showNotificationBar("Question updated");
             }
-            if (e.target === answer) {
+            if (e.target === answerText) {
                 saveAnswer(id);
                 showNotificationBar("Answer updated");
             }
         }
     };
 
-    onHover = (e) => {
+    onHover = () => {
         deleteButton.classList.add("visible");
         deleteButton.classList.remove("hidden");
     };
-    onMouseLeave = (e) => {
+    onMouseLeave = () => {
         deleteButton.classList.remove("visible");
         deleteButton.classList.add("hidden");
     };
 
-    onFocusOut = (e) => {
+    onFocusOut = () => {
         answer.innerText = defaultValue.answer;
         questionText.innerText = defaultValue.question;
     };
@@ -195,7 +191,6 @@ function renderCard(id, question, answer, created) {
                 removeElementFromHTMLQuestionList(id);
                 showNotificationBar("Question deletion was successful");
                 storeQuestionListInWindowLocalStorage();
-
             }
         }
 
@@ -211,7 +206,6 @@ function renderAddButton() {
     addButton.addEventListener('click', addNewQuestion, false);
     addButton.className = "addBtn";
     return addButton;
-
 }
 
 
@@ -279,11 +273,11 @@ function addNodeElementToQuestions(id, question, answer, created) {
     let card = renderCard(id, question, answer, created)
     cardContainerNode.insertBefore(card, cardContainerNode.firstChild.nextSibling);
     card.getElementsByClassName("question-text")[0].focus();
-};
+}
 
 function addNodeElementToNav(id, text) {
     navContainerNode.appendChild(renderNavLink(id, text));
-};
+}
 
 
 function addNewQuestion() {
@@ -335,12 +329,10 @@ function saveAnswer(id) {
         return el.id === id;
     })[0];
 
-    console.log(document.getElementById(id).getElementsByClassName("answer-text")[0].innerText);
     original.answer = document.getElementById(id).getElementsByClassName("answer-text")[0].innerText;
     questions[indexOfOriginal] = original;
     renderQuestions();
-
-
+    storeQuestionListInWindowLocalStorage();
 }
 
 function saveQuestion(id) {
