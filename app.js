@@ -75,7 +75,7 @@ let zeroQuestionList = [{
     creationDate: 1541944069,
     rating: 0
 }];
-init();
+
 
 
 function storeQuestionListInWindowLocalStorage() {
@@ -84,22 +84,19 @@ function storeQuestionListInWindowLocalStorage() {
 
 
 function init() {
-    let storedList = window.localStorage.getItem("storedQuestionList");
-    if (storedList !== "null" && storedList !== "undefined" && storedList!=="[]") {
-        try {
-            questions = JSON.parse(window.localStorage.getItem("storedQuestionList"));
-        }
-        catch (err) {
-            questions = zeroQuestionList;
-        }
-    } else {
-        questions = zeroQuestionList;
-
+    const storedQuestionList = window.localStorage.getItem("storedQuestionList");
+    try{
+        questions = storedQuestionList ? JSON.parse(storedQuestionList) : zeroQuestionList
+    } catch (err) {
+        questions = zeroQuestionList
     }
+
     storeQuestionListInWindowLocalStorage();
     renderQuestions();
     renderNav();
 }
+
+init();
 
 
 function generateId() {
