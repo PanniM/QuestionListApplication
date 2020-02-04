@@ -11,18 +11,18 @@ __Epic:__ Questionnaire Editor
 
 ### Features
 __Mandatory:__
-- list existing questions with creation date            //////////       OK
-- list answers under existing questions (if it is missing, write your own answer)            //////////       OK
-- add new question with answer to the list            //////////       OK
+- list existing questions with creation date 
+- list answers under existing questions (if it is missing, write your own answer) 
+- add new question with answer to the list
 - simple, fancy style
 
 __Optional__:
-- remove existing question with its answer from the list -            //////////       OK
+- remove existing question with its answer from the list -  
 - edit existing questions and answers
 - show star rating of a question in the list (update those values based on your insights) 
-- store the list and restore it when the app is opened ????????????????
-- side menu with fast links on questions                                    /// OK
-- notifications for actions            //////////       OK
+- store the list and restore it when the app is opened
+- side menu with fast links on questions
+- notifications for actions
 
 ---
 
