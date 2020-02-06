@@ -172,7 +172,7 @@ function renderCard(id, question, answer, created) {
     };
 
     onFocusOut = () => {
-        answer.innerText = defaultValue.answer;
+        answerText.innerText = defaultValue.answer;
         questionText.innerText = defaultValue.question;
     };
 
